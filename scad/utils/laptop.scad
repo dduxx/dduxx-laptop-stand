@@ -1,0 +1,18 @@
+LAPTOP_WIDTH = 312.6;
+LAPTOP_DEPTH = 221.2;
+LAPTOP_HEIGHT = 15.5;
+
+LAPTOP_CORNER_RAD = 10;
+
+LAPTOP_COLOR = "#A7ADBA";
+
+module LAPTOP() {
+    translate([LAPTOP_CORNER_RAD, LAPTOP_CORNER_RAD, 0])
+    color(LAPTOP_COLOR)
+    linear_extrude(LAPTOP_HEIGHT)
+    minkowski() {
+        square([LAPTOP_WIDTH - (2*LAPTOP_CORNER_RAD), LAPTOP_DEPTH - (2*LAPTOP_CORNER_RAD)]);
+
+        circle(r=LAPTOP_CORNER_RAD);
+    }
+}
