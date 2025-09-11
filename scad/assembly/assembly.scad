@@ -1,7 +1,7 @@
 include <../stand/base.scad>
 include <../stand/stand.scad>
+include <../utils/laptop.scad>
 
-RENDER_FUNCTION="render_all";
 START_POINT = 25;
 
 module render_base() {
@@ -14,7 +14,7 @@ module render_lid() {
 }
 
 module render_stand() {
-    translate([0, 0, ENCLOSURE_Z + (2 * START_POINT) + 2])
+    translate([0, 0, ENCLOSURE_Z + (2 * START_POINT)])
     stand();
 }
 
@@ -24,14 +24,16 @@ module render_all() {
     render_base();
 }
 
-if (RENDER_FUNCTION == "render_all") {
-    render_all();
-} else if (RENDER_FUNCTION == "render_stand") {
-    render_stand();
-} else if (RENDER_FUNCTION == "render_lid") {
-    render_lid();
-} else if (RENDER_FUNCTION == "render_base") {
-    render_base();
-} else {
-    echo(RENDER_FUNCTION, "is not a supported render function");
+module render_demo() {
+    translate([-LAPTOP_HEIGHT/2, -LAPTOP_WIDTH/2, ENCLOSURE_Z + WALL + 1])
+    rotate([90, 0, 90])
+    laptop();
+
+    translate([0, 0, ENCLOSURE_Z + 1])
+    stand();
+
+    translate([0, 0, ENCLOSURE_Z])
+    enclosure_lid();
+
+    enclosure_base();
 }

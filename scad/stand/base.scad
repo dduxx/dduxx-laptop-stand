@@ -87,11 +87,6 @@ module enclosure_base() {
 
     translate([ENCLOSURE_X/2 - CORNER_BLOCK/2 , -ENCLOSURE_Y/2 + CORNER_BLOCK/2, 0])
     corner_block();
-
-    translate([0, ENCLOSURE_Y/2 - KEYSTONE_CUTOUT_Z/2])
-    linear_extrude(10)
-    square([ENCLOSURE_X - CORNER_BLOCK/2, KEYSTONE_CUTOUT_Z], center=true);
-
 }
 
 module enclosure_lid() {

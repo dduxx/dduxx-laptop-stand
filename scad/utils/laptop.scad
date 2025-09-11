@@ -6,7 +6,7 @@ LAPTOP_CORNER_RAD = 10;
 
 LAPTOP_COLOR = "#A7ADBA";
 
-module LAPTOP() {
+module laptop() {
     translate([LAPTOP_CORNER_RAD, LAPTOP_CORNER_RAD, 0])
     color(LAPTOP_COLOR)
     linear_extrude(LAPTOP_HEIGHT)

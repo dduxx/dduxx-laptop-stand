@@ -18,7 +18,7 @@ log "Starting render process..."
 for part in "${ASSEMBLY_PARTS[@]}"; do
     log "Started rendering [${part}]"
     openscad-nightly -q \
-        -D "RENDER_FUNCTION=\"render_${part}\";" \
+        -D "render_${part}();" \
         -o "${OUTPUT_PATH}/${part}.stl" \
         "${ASSEMBLY_PATH}"
     log "Finished rendering [${part}]"
