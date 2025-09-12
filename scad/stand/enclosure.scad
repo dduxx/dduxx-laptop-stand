@@ -1,6 +1,7 @@
-include <./stand.scad>
 include <../utils/keystone.scad>
 include <../utils/const.scad>
+include <../utils/screw.scad>
+include <../utils/laptop.scad>
 
 CORNER_BLOCK = 15;
 
@@ -12,6 +13,20 @@ CABLE_HOLE_Y = 30;
 AIRFLOW_HOLE_RAD = 4;
 AIRFLOW_HOLE_FACES = 6;
 AIRFLOW_HOLE_BUFFER = 2;
+
+ARM_HEIGHT = 60;
+ARM_WIDTH_FACTOR = 6;
+ARM_DEPTH = 25;
+ARM_EDGE_OFFSET = 30;
+
+ARM_BASE_WIDTH = 36;
+
+STAND_ARM_POINTS = [
+    [0, 0],
+    [ARM_BASE_WIDTH, 0],
+    [ARM_BASE_WIDTH - (ARM_BASE_WIDTH/ARM_WIDTH_FACTOR), ARM_HEIGHT],
+    [(ARM_BASE_WIDTH/ARM_WIDTH_FACTOR), ARM_HEIGHT]
+];
 
 module corner_block() {
     difference() {
@@ -89,6 +104,21 @@ module enclosure_base() {
     corner_block();
 }
 
+module stand_arms() {
+    cutout_width = LAPTOP_HEIGHT * (1 + (LAPTOP_THICKNESS_BUFFER_PERCENT/100));
+    
+    translate([0, ARM_DEPTH/2, 0])
+    rotate([90, 0, 0])
+    linear_extrude(ARM_DEPTH)
+    difference() {
+        translate([-ARM_BASE_WIDTH/2, 0, 0])
+        polygon(STAND_ARM_POINTS);
+
+        translate([-cutout_width/2, 0, 0])
+        square([cutout_width, ARM_HEIGHT]);
+    }
+}
+
 module enclosure_lid() {
     difference() {
         linear_extrude(WALL)
@@ -96,36 +126,6 @@ module enclosure_lid() {
             square([ENCLOSURE_X - (2*FILLET_RAD), ENCLOSURE_Y - (2*FILLET_RAD)], center=true);
 
             circle(r=FILLET_RAD);
-        }
-
-        translate([0, 0, WALL/2])
-        linear_extrude(WALL)
-        minkowski() {
-            square(
-                [
-                    STAND_BASE_X - (2*FILLET_RAD) + 1, 
-                    ENCLOSURE_Y - (2*FILLET_RAD) + 1
-                ], 
-                center=true
-            );
-
-            circle(FILLET_RAD);
-        }
-
-        translate([0, 0, 3])
-        rotate([0, 180, 0])
-        union() {
-            translate([-(STAND_BASE_X/2) + SCREW_EDGE_OFFSET, -ENCLOSURE_Y/2 + SCREW_EDGE_OFFSET, 2])
-            screw_cutout(SCREW_HEAD_RAD, SCREW_HEAD_HEIGHT, SCREW_M3_RAD, SCREW_SHANK_HEIGHT);
-
-            translate([(STAND_BASE_X/2) - SCREW_EDGE_OFFSET, -ENCLOSURE_Y/2 + SCREW_EDGE_OFFSET, 2])
-            screw_cutout(SCREW_HEAD_RAD, SCREW_HEAD_HEIGHT, SCREW_M3_RAD, SCREW_SHANK_HEIGHT);
-
-            translate([-(STAND_BASE_X/2) + SCREW_EDGE_OFFSET, ENCLOSURE_Y/2 - SCREW_EDGE_OFFSET, 2])
-            screw_cutout(SCREW_HEAD_RAD, SCREW_HEAD_HEIGHT, SCREW_M3_RAD, SCREW_SHANK_HEIGHT);
-
-            translate([(STAND_BASE_X/2) - SCREW_EDGE_OFFSET, ENCLOSURE_Y/2 - SCREW_EDGE_OFFSET, 2])
-            screw_cutout(SCREW_HEAD_RAD, SCREW_HEAD_HEIGHT, SCREW_M3_RAD, SCREW_SHANK_HEIGHT);
         }
 
         translate([ENCLOSURE_X/2 - CORNER_BLOCK/2 , ENCLOSURE_Y/2 - CORNER_BLOCK/2, 2])
@@ -140,7 +140,7 @@ module enclosure_lid() {
         translate([ENCLOSURE_X/2 - CORNER_BLOCK/2 , -ENCLOSURE_Y/2 + CORNER_BLOCK/2, 2])
         screw_cutout(SCREW_HEAD_RAD, SCREW_HEAD_HEIGHT, SCREW_M3_RAD, SCREW_SHANK_HEIGHT);
 
-        translate([(STAND_BASE_X/2) + CABLE_HOLE_X/2 + WALL, (-ENCLOSURE_Y/2) + (CABLE_HOLE_Y/2) + WALL, 0])
+        translate([(ARM_BASE_WIDTH/2) + CABLE_HOLE_X/2 + WALL, (-ENCLOSURE_Y/2) + (CABLE_HOLE_Y/2) + WALL, 0])
         linear_extrude(WALL)
         minkowski() {
             square([CABLE_HOLE_X - (2*FILLET_RAD), CABLE_HOLE_Y - (2*FILLET_RAD)], center=true);
@@ -148,7 +148,7 @@ module enclosure_lid() {
             circle(FILLET_RAD);
         }
 
-        translate([(STAND_BASE_X/2) + CABLE_HOLE_X/2 + WALL, (ENCLOSURE_Y/2) - (CABLE_HOLE_Y/2) - WALL, 0])
+        translate([(ARM_BASE_WIDTH/2) + CABLE_HOLE_X/2 + WALL, (ENCLOSURE_Y/2) - (CABLE_HOLE_Y/2) - WALL, 0])
         linear_extrude(WALL)
         minkowski() {
             square([CABLE_HOLE_X - (2*FILLET_RAD), CABLE_HOLE_Y - (2*FILLET_RAD)], center=true);
@@ -156,4 +156,9 @@ module enclosure_lid() {
             circle(FILLET_RAD);
         }
     }
+
+    translate([0, -ENCLOSURE_Y/2 + ARM_DEPTH/2 + ARM_EDGE_OFFSET, WALL])
+    stand_arms();
+    translate([0, ENCLOSURE_Y/2 - ARM_DEPTH/2 - ARM_EDGE_OFFSET, WALL])
+    stand_arms();
 }

@@ -24,6 +24,7 @@ module keystone_panel_cutout(jacks, thickness) {
 module keystone_mount() {
     translate([0, 0, KEYSTONE_CUTOUT_Z/2])
     difference() {
+        scale([1.02, 1, 1])
         translate([0, -1.3, 0])
         // all credit for this model goes to Starkadder. model can be found here: https://www.thingiverse.com/thing:2668816
         import("../../fixtures/Small_Single_Keystone_Jack_Faceplate.stl", center=true);
