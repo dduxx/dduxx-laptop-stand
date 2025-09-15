@@ -5,8 +5,6 @@ KEYSTONE_CUTOUT_Z = 11.5;
 function calculate_keystone_panel_width(jacks) = jacks * KEYSTONE_CUTOUT_X;
 
 module keystone_panel(jacks) {
-    translate([0, KEYSTONE_CUTOUT_Z, KEYSTONE_CUTOUT_Y/2])
-    rotate([90, 0, 0])
     union() {
         for (i = [0 : jacks-1]) {
             translate([-(calculate_keystone_panel_width(jacks)/2) + (KEYSTONE_CUTOUT_X/2) + (KEYSTONE_CUTOUT_X * i), 0, 0])
@@ -17,8 +15,8 @@ module keystone_panel(jacks) {
 }
 
 module keystone_panel_cutout(jacks, thickness) {
-    translate([0, thickness/2, KEYSTONE_CUTOUT_Y/2])
-    cube([calculate_keystone_panel_width(jacks), thickness, KEYSTONE_CUTOUT_Y], center=true);
+    translate([0, 0, thickness/2])
+    cube([calculate_keystone_panel_width(jacks), KEYSTONE_CUTOUT_Y, thickness], center=true);
 }
 
 module keystone_mount() {

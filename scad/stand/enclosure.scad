@@ -61,47 +61,125 @@ module airflow() {
 
 }
 
-module enclosure_base() {
+module enclosure_keystone_panel_cutout(buffer) {
+    panel_width = ENCLOSURE_X + buffer - (CORNER_BLOCK * 2);
+    panel_height = ENCLOSURE_Z - WALL + buffer;
+    linear_extrude(WALL)
+    union() {
+        minkowski() {
+            square([panel_width - (2*FILLET_RAD), panel_height - (2*FILLET_RAD)], center=true);
+            circle(FILLET_RAD);
+        }
+
+        translate([-(panel_width/2) - CORNER_BLOCK/2, 0, 0])
+        union() {
+            circle(r=CORNER_BLOCK/2 + (buffer/2));
+            translate([CORNER_BLOCK/4, 0, 0])
+            square([CORNER_BLOCK/2 + buffer, CORNER_BLOCK + buffer], center=true);
+        }
+        
+        translate([(panel_width/2) + CORNER_BLOCK/2, 0, 0])
+        union() {
+            circle(r=CORNER_BLOCK/2 + (buffer/2));
+            translate([-CORNER_BLOCK/4, 0, 0])
+            square([CORNER_BLOCK/2 + buffer, CORNER_BLOCK + buffer], center=true);
+        }
+    }
+    
+}
+
+module enclosure_keystone_panel() {
+    panel_width = ENCLOSURE_X - (CORNER_BLOCK * 2);
+    panel_height = ENCLOSURE_Z - WALL;
+
     difference() {
-        linear_extrude(ENCLOSURE_Z)
-        minkowski() {
-            square([ENCLOSURE_X - (2*FILLET_RAD), ENCLOSURE_Y - (2*FILLET_RAD)], center=true);
+        linear_extrude(WALL)
+        union() {
+            minkowski() {
+                square([panel_width - (2*FILLET_RAD), panel_height - (2*FILLET_RAD)], center=true);
+                circle(FILLET_RAD);
+            }
 
-            circle(r=FILLET_RAD);
+            translate([-ENCLOSURE_X/2 + CORNER_BLOCK/2, 0, 0])
+            union() {
+                circle(r=CORNER_BLOCK/2);
+                translate([CORNER_BLOCK/4, 0, 0])
+                square([CORNER_BLOCK/2, CORNER_BLOCK], center=true);
+            }
+            
+            translate([ENCLOSURE_X/2 - CORNER_BLOCK/2, 0, 0])
+            union() {
+                circle(r=CORNER_BLOCK/2);
+                translate([-CORNER_BLOCK/4, 0, 0])
+                square([CORNER_BLOCK/2, CORNER_BLOCK], center=true);
+            }
         }
 
-        translate([0, 0, WALL])
-        linear_extrude(ENCLOSURE_Z - WALL)
-        minkowski() {
-            square([ENCLOSURE_X - (2*FILLET_RAD) - (2 * WALL), ENCLOSURE_Y - (2*FILLET_RAD) - (2 * WALL)], center=true);
-
-            circle(r=FILLET_RAD);
-        }
-
-        translate([0, (ENCLOSURE_Y/2) - WALL, WALL + 5])
         keystone_panel_cutout(NUMBER_OF_JACKS,  WALL + WALL);
 
-        translate([-ENCLOSURE_X/2, 0, WALL + AIRFLOW_HOLE_BUFFER])
-        airflow();
+        translate([(ENCLOSURE_X/2) - (CORNER_BLOCK/2), 0, WALL/2])
+        rotate([180, 0, 0])
+        screw_cutout(SCREW_HEAD_RAD, SCREW_HEAD_HEIGHT, SCREW_M3_RAD, SCREW_SHANK_HEIGHT);
 
-        translate([(ENCLOSURE_X/2) - WALL, 0, WALL + AIRFLOW_HOLE_BUFFER])
-        airflow();
+        translate([-(ENCLOSURE_X/2) + (CORNER_BLOCK/2), 0, WALL/2])
+        rotate([180, 0, 0])
+        screw_cutout(SCREW_HEAD_RAD, SCREW_HEAD_HEIGHT, SCREW_M3_RAD, SCREW_SHANK_HEIGHT);
     }
 
-    translate([0, (ENCLOSURE_Y/2) - KEYSTONE_CUTOUT_Z, WALL + 5])
     keystone_panel(NUMBER_OF_JACKS);
+}
 
-    translate([ENCLOSURE_X/2 - CORNER_BLOCK/2 , ENCLOSURE_Y/2 - CORNER_BLOCK/2, 0])
-    corner_block();
+module enclosure_base() {
+    difference() {
+        union() {
+            difference() {
+                linear_extrude(ENCLOSURE_Z)
+                minkowski() {
+                    square([ENCLOSURE_X - (2*FILLET_RAD), ENCLOSURE_Y - (2*FILLET_RAD)], center=true);
 
-    translate([-ENCLOSURE_X/2 + CORNER_BLOCK/2 , ENCLOSURE_Y/2 - CORNER_BLOCK/2, 0])
-    corner_block();
+                    circle(r=FILLET_RAD);
+                }
 
-    translate([-ENCLOSURE_X/2 + CORNER_BLOCK/2 , -ENCLOSURE_Y/2 + CORNER_BLOCK/2, 0])
-    corner_block();
+                translate([0, 0, WALL])
+                linear_extrude(ENCLOSURE_Z - WALL)
+                minkowski() {
+                    square([ENCLOSURE_X - (2*FILLET_RAD) - (2 * WALL), ENCLOSURE_Y - (2*FILLET_RAD) - (2 * WALL)], center=true);
 
-    translate([ENCLOSURE_X/2 - CORNER_BLOCK/2 , -ENCLOSURE_Y/2 + CORNER_BLOCK/2, 0])
-    corner_block();
+                    circle(r=FILLET_RAD);
+                }
+
+                translate([-ENCLOSURE_X/2, 0, WALL + AIRFLOW_HOLE_BUFFER])
+                airflow();
+
+                translate([(ENCLOSURE_X/2) - WALL, 0, WALL + AIRFLOW_HOLE_BUFFER])
+                airflow();
+            }
+
+            translate([ENCLOSURE_X/2 - CORNER_BLOCK/2 , ENCLOSURE_Y/2 - CORNER_BLOCK/2, 0])
+            corner_block();
+
+            translate([-ENCLOSURE_X/2 + CORNER_BLOCK/2 , ENCLOSURE_Y/2 - CORNER_BLOCK/2, 0])
+            corner_block();
+
+            translate([-ENCLOSURE_X/2 + CORNER_BLOCK/2 , -ENCLOSURE_Y/2 + CORNER_BLOCK/2, 0])
+            corner_block();
+
+            translate([ENCLOSURE_X/2 - CORNER_BLOCK/2 , -ENCLOSURE_Y/2 + CORNER_BLOCK/2, 0])
+            corner_block();
+        }
+
+        translate([0, ENCLOSURE_Y/2, (ENCLOSURE_Z/2) + (WALL/2)])
+        rotate([90, 0, 0])
+        enclosure_keystone_panel_cutout(1);
+
+        translate([(ENCLOSURE_X/2) - (CORNER_BLOCK/2), ENCLOSURE_Y/2, (ENCLOSURE_Z/2) + (WALL/2)])
+        rotate([90, 0, 0])
+        cylinder(h=CORNER_BLOCK, r=1.6);
+
+        translate([-(ENCLOSURE_X/2) + (CORNER_BLOCK/2), ENCLOSURE_Y/2, (ENCLOSURE_Z/2) + (WALL/2)])
+        rotate([90, 0, 0])
+        cylinder(h=CORNER_BLOCK, r=1.6);
+    }
 }
 
 module stand_arms() {
