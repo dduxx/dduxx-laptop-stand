@@ -1,5 +1,4 @@
-include <../stand/base.scad>
-include <../stand/stand.scad>
+include <../stand/enclosure.scad>
 include <../utils/laptop.scad>
 
 START_POINT = 25;
@@ -13,15 +12,16 @@ module render_lid() {
     enclosure_lid();
 }
 
-module render_stand() {
-    translate([0, 0, ENCLOSURE_Z + (2 * START_POINT)])
-    stand();
+module render_keystone_panel() {
+    translate([0, ENCLOSURE_Y/2 + START_POINT, (ENCLOSURE_Z/2) + (WALL/2)])
+    rotate([90, 0, 0])
+    enclosure_keystone_panel(); 
 }
 
 module render_all() {
-    render_stand();
     render_lid();
     render_base();
+    render_keystone_panel();
 }
 
 module render_demo() {
@@ -29,11 +29,12 @@ module render_demo() {
     rotate([90, 0, 90])
     laptop();
 
-    translate([0, 0, ENCLOSURE_Z + 1])
-    stand();
-
     translate([0, 0, ENCLOSURE_Z])
     enclosure_lid();
+
+    translate([0, ENCLOSURE_Y/2, (ENCLOSURE_Z/2) + (WALL/2)])
+    rotate([90, 0, 0])
+    enclosure_keystone_panel(); 
 
     enclosure_base();
 }

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 ASSEMBLY_PATH="./scad/assembly/assembly.scad"
-ASSEMBLY_PARTS=("all" "base" "lid" "stand")
+ASSEMBLY_PARTS=("all" "base" "lid" "keystone_panel")
 OUTPUT_PATH="./stl"
 
 log() {
